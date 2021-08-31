@@ -1,3 +1,4 @@
 pandas==1.2.3
 opencv-python
 easyocr
+mlflow==1.20.1

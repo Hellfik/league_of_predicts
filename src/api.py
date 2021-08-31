@@ -18,8 +18,8 @@ import sys
 import os
 import numpy as np
 
-from streamlit.classes import Match
-sys.path.append('../src')
+#from streamlit.classes import Match
+sys.path.append('./src')
 from ocr.cropping import crop_numericals
 from ocr.detection import extract_results
 import pandas as pd
@@ -33,7 +33,7 @@ app = FastAPI()
 
 # Connect to SQL
 DB_NAME = 'lol_db'
-filename = '../models/regression_logistique'
+filename = './models/regression_logistique'
 
 ########################
 #      API ROUTES      #
