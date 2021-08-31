@@ -14,20 +14,10 @@
 from fastapi import FastAPI, Request
 
 import joblib
-import sys
-import os
 import numpy as np
 
-#from streamlit.classes import Match
-sys.path.append('./src')
-from ocr.cropping import crop_numericals
-from ocr.detection import extract_results
-import pandas as pd
-import pickle5 as pickle
-import xgboost
 #from database import Database
-from PIL import Image
-from config import USER, PASSWORD # Build your own config file
+#from config import USER, PASSWORD # Build your own config file
 
 app = FastAPI()
 
@@ -90,33 +80,6 @@ async def get_one_match(match_id):
     cursor.close()
     return {'match_id': match}
 
-@app.get('/predicts/{blue_gold}/{red_gold}/{timeline}/{blue_kills}/{red_kills}')
-async def get_predictions(blue_gold :int, red_gold :int, timeline :int, blue_kills :int, red_kills :int):
-    """
-    Predict the win rate by timeline
-    """
-
-    classifier = joblib.load(open(filename, 'rb'))
-    predictions = classifier.predict([[blue_gold, red_gold, timeline, blue_kills, red_kills]])
-    predictions_proba = classifier.predict_proba([[blue_gold, red_gold, timeline, blue_kills, red_kills]])
-
-    print(predictions)
-    print(predictions_proba)
-
-    labels = ["Lose","Win"]
-    data = {
-        'Blue Win' : {
-            'Probabilities' : predictions_proba[0][1]
-        },
-        'Blue lose' : {
-            'Probabilities' : predictions_proba[0][0]
-        },
-        'Prediction' : labels[predictions[0]]
-
-    }
-
-    return data
-
 
 @app.post('/predict/')
 async def predict_who_win(request: Request):
@@ -137,8 +100,8 @@ async def predict_who_win(request: Request):
         match["red_team_adc_kills"], match["red_team_adc_deaths"], match["red_team_adc_assists"],
         match["red_team_sup_kills"], match["red_team_sup_deaths"], match["red_team_sup_assists"],
     ])
+
     data_picture = data_picture.astype(np.float64)
-    print(data_picture)      
     classifier = joblib.load(open(filename, 'rb'))
     print(classifier)
     predictions = classifier.predict([data_picture])
@@ -147,12 +110,8 @@ async def predict_who_win(request: Request):
     print(predictions_proba)
     labels = ["Lose","Win"]
     data_predict = {
-        'Blue_Win' : {
-            'Probabilities' : predictions_proba[0][1]
-        },
-        'Blue_lose' : {
-            'Probabilities' : predictions_proba[0][0]
-        },
+        'Blue_Win' : predictions_proba[0][0],
         'Prediction' : labels[predictions[0]]
     }
+    print(predictions, predictions_proba)
     return data_predict
