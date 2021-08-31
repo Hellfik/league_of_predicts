@@ -125,7 +125,9 @@ if im:
                     res = requests.post(
                         API_PATH + '/predict/', json=match.list_attributes_values()
                     )
+                    print(res)
                     r = res.json()
+                    print(r)
                     state.pred_blue = r["Blue_Win"]["Probabilities"]
                 else:
                     st.error(

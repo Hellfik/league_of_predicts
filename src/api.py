@@ -124,7 +124,7 @@ async def predict_who_win(request: Request):
         Predict who_win with probabilities
     """
     match = await request.json()
-    data_picture = [
+    data_picture = np.array([
         match["timer"], match["blue_team_towers"], match["red_team_towers"], match["blue_team_golds"], match["red_team_golds"],
         match["blue_team_top_kills"], match["blue_team_top_deaths"], match["blue_team_top_assists"],
         match["blue_team_jgl_kills"], match["blue_team_jgl_deaths"], match["blue_team_jgl_assists"],
@@ -136,12 +136,15 @@ async def predict_who_win(request: Request):
         match["red_team_mid_kills"], match["red_team_mid_deaths"], match["red_team_mid_assists"],
         match["red_team_adc_kills"], match["red_team_adc_deaths"], match["red_team_adc_assists"],
         match["red_team_sup_kills"], match["red_team_sup_deaths"], match["red_team_sup_assists"],
-    ]
-              
+    ])
+    data_picture = data_picture.astype(np.float64)
+    print(data_picture)      
     classifier = joblib.load(open(filename, 'rb'))
+    print(classifier)
     predictions = classifier.predict([data_picture])
+    print(predictions)
     predictions_proba = classifier.predict_proba([data_picture])
-
+    print(predictions_proba)
     labels = ["Lose","Win"]
     data_predict = {
         'Blue_Win' : {
@@ -151,7 +154,5 @@ async def predict_who_win(request: Request):
             'Probabilities' : predictions_proba[0][0]
         },
         'Prediction' : labels[predictions[0]]
-
     }
-
     return data_predict
