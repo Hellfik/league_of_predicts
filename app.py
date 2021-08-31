@@ -127,8 +127,12 @@ if im:
                     )
                     print(res)
                     r = res.json()
+<<<<<<< HEAD
                     print(r)
                     state.pred_blue = r["Blue_Win"]["Probabilities"]
+=======
+                    state.pred_blue = r["Blue_Win"]
+>>>>>>> 1c9e794cee1b61af27eadb593519d85f1f82ab4d
                 else:
                     st.error(
                         'Au moins un des KDA est incorrect, veuillez vérifier svp')
@@ -137,15 +141,25 @@ if im:
     if state.pred_blue:
         if state.pred_blue >= 0.5:
             container.markdown(
-                "_L'équipe bleue à de plus grandes chances de victoire._"
+                "## _L'équipe bleue à de plus grandes chances de victoire._"
             )
         else:
-            container.header(
-                "_L'équipe rouge à de plus grandes chances de victoire._"
+            container.markdown(
+                "## _L'équipe rouge à de plus grandes chances de victoire._"
                 )
-        blue_col, red_col = container.columns([state.pred_blue, 1-state.pred_blue])
+
+        size = state.pred_blue > 0.895 and [0.895, 0.105] \
+            or state.pred_blue < 0.105 and [0.105, 0.895] \
+            or [state.pred_blue, 1-state.pred_blue]
+        
+        blue_col, red_col = container.columns(size)
         with blue_col:
-            st.info(f"{round(state.pred_blue * 100, 2)} %")
+            st.info(f"# _{round(state.pred_blue * 100, 2)} %_")
         with red_col:
+<<<<<<< HEAD
             st.error(f"{100 - round(state.pred_blue * 100, 2)} %")
         st.button("Nouvelle recherche ?", on_click=update_pred)
+=======
+            st.error(f"# _{round(100 - state.pred_blue * 100, 2)} %_")
+        st.button("Nouvelle recherche ?", on_click=update_pred)
+>>>>>>> 1c9e794cee1b61af27eadb593519d85f1f82ab4d
